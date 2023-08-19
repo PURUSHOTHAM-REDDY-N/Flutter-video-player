@@ -52,31 +52,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           aspectRatio: 16 / 9),
       betterPlayerDataSource: betterPlayerDataSource,
     );
-
-    _betterPlayerController.addEventsListener((pause) {
-      print('paused');
-      void _showMyDialog(BuildContext context) {
-        showDialog(
-          context: context,
-          barrierDismissible:
-              true, // Determines whether you can dismiss the dialog by tapping outside of it.
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('My Dialog'),
-              content: Text('This is the content of the dialog.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    });
   }
 
   @override
