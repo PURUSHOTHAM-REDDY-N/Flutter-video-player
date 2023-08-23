@@ -14,51 +14,63 @@ class VideoPlayerScreen extends StatefulWidget {
 }
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-  late BccmPlayerController playerController;
+  late BccmPlayerController controller;
 
   @override
   void initState() {
-    super.initState();
-    _requestPermission();
-    playerController = BccmPlayerController(
+    // You can also use the global "primary" controller.
+    // The primary player has superpowers like notification player, background playback, casting, etc:
+    // final controller = BccmPlayerInterface.instance.primaryController;
+    controller = BccmPlayerController(
       MediaItem(
-        url: '${widget.path}',
+        url: widget.path,
         mimeType: 'video/*',
-        metadata: MediaMetadata(title: 'Apple advanced (HLS/HDR)'),
+        metadata: MediaMetadata(title: 'TEST'),
       ),
     );
-    playerController.initialize().then((_) => playerController.setMixWithOthers(
-        true)); // if you want to play together with other videos
+
+    controller.initialize().then((_) => controller.setMixWithOthers(
+        false)); // if you want to play together with other videos
+    controller.enterNativeFullscreen();
     super.initState();
   }
 
   @override
   void dispose() {
-    if (!playerController.isPrimary) {
-      playerController.dispose();
-    }
+    controller.dispose();
     super.dispose();
-  }
-
-  Future<void> _requestPermission() async {
-    // Requesting the storage permission
-    final status = await Permission.storage.request();
-
-    if (status.isGranted) {
-    } else if (status.isDenied) {}
   }
 
   @override
   Widget build(BuildContext context) {
+    final tracksFuture = controller.getTracks();
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Video Player'),
-      ),
-      body: BccmPlayerView(
-        config: BccmPlayerViewConfig(
-            allowSystemGestures: false, useSurfaceView: true),
-        playerController,
-        //config: BccmPlayerViewConfig()
+      appBar: AppBar(title: Text("new")),
+      backgroundColor: Colors.black,
+      body: ListView(
+        children: [
+          Column(
+            children: [
+              BccmPlayerView(
+                controller,
+                //config: BccmPlayerViewConfig()
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  controller.enterNativeFullscreen();
+                },
+                child: const Text('Full screen'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // print("asssss ${controller.value.}");
+                  // controller.dispose();
+                },
+                child: const Text('Exit Player'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
