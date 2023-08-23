@@ -1,9 +1,8 @@
 import 'dart:async';
-
-import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:bccm_player/bccm_player.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   final String path;
@@ -15,49 +14,29 @@ class VideoPlayerScreen extends StatefulWidget {
 }
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-  late BetterPlayerController _betterPlayerController;
+  late BccmPlayerController playerController;
 
   @override
   void initState() {
     super.initState();
     _requestPermission();
-    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.file,
-      widget.path,
+    playerController = BccmPlayerController(
+      MediaItem(
+        url: '${widget.path}',
+        mimeType: 'video/*',
+        metadata: MediaMetadata(title: 'Apple advanced (HLS/HDR)'),
+      ),
     );
-
-    // _betterPlayerController=BetterPlayerAsmsTrack(id, width, height, bitrate, frameRate, codecs, mimeType)
-
-    _betterPlayerController = BetterPlayerController(
-      const BetterPlayerConfiguration(
-          // overlay: Center(child: Text('data', style: TextStyle(fontSize: 26))),
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.cupertino,
-            enableMute: true,
-            backgroundColor: Colors.black,
-            audioTracksIcon: Icons.abc_sharp,
-            controlsHideTime: Duration.zero,
-            overflowMenuIcon: Icons.settings,
-          ),
-          expandToFill: true,
-          showPlaceholderUntilPlay: true,
-          placeholder:
-              Center(child: Text('data', style: TextStyle(fontSize: 26))),
-          placeholderOnTop: true,
-          // playerVisibilityChangedBehavior: ,
-          autoPlay: false,
-          fit: BoxFit.cover,
-          fullScreenByDefault: true,
-          autoDetectFullscreenDeviceOrientation: true,
-          autoDetectFullscreenAspectRatio: true,
-          aspectRatio: 16 / 9),
-      betterPlayerDataSource: betterPlayerDataSource,
-    );
+    playerController.initialize().then((_) => playerController.setMixWithOthers(
+        true)); // if you want to play together with other videos
+    super.initState();
   }
 
   @override
   void dispose() {
-    _betterPlayerController.dispose();
+    if (!playerController.isPrimary) {
+      playerController.dispose();
+    }
     super.dispose();
   }
 
@@ -75,7 +54,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       appBar: AppBar(
         title: Text('Video Player'),
       ),
-      body: BetterPlayer(controller: _betterPlayerController),
+      body: BccmPlayerView(
+        config: BccmPlayerViewConfig(
+            allowSystemGestures: false, useSurfaceView: true),
+        playerController,
+        //config: BccmPlayerViewConfig()
+      ),
     );
   }
 }
