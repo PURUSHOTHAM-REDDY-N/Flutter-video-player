@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_player/src/pages/home_page.dart';
 import 'package:bccm_player/bccm_player.dart';
 
-void main() async {
-  // await BccmPlayerInterface.instance.setup();
+void main() {
+  startPlayer();
   runApp(const MyApp());
+}
+
+startPlayer() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await BccmPlayerInterface.instance.setup();
 }
 
 class MyApp extends StatelessWidget {

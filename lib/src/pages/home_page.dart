@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_player/src/widgets/intent_file.dart';
-import 'package:flutter_video_player/src/widgets/show_video_files.dart';
 import 'package:flutter_video_player/src/widgets/video_list.dart';
 
 class HomePage extends StatefulWidget {
