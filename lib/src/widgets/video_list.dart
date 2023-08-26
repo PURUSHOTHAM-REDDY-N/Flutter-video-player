@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_video_player/src/widgets/show_video_files.dart';
 import 'package:flutter_video_player/src/widgets/thumbnail_show.dart';
