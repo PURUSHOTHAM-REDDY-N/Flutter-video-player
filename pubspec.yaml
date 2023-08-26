@@ -41,6 +41,7 @@ dependencies:
   video_thumbnail: ^0.5.3
   device_info_plus: ^8.2.2
   bccm_player: ^1.1.1
+  sqflite: ^2.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

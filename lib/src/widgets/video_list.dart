@@ -34,7 +34,6 @@ class _VideoListState extends State<VideoList> {
   }
 
   _fetchVideos() async {
-    // PhotoManager.setIgnorePermissionCheck(true);
     List<AssetPathEntity> entities = await PhotoManager.getAssetPathList(
       type: RequestType.video,
     );
@@ -87,7 +86,6 @@ class _VideoListState extends State<VideoList> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView.builder(
-        physics: SlowScrollPhysics(factor: 1.5),
         itemCount: videos.length,
         itemBuilder: (context, index) {
           return Padding(
@@ -140,23 +138,5 @@ class _VideoListState extends State<VideoList> {
         },
       ),
     );
-  }
-}
-
-class SlowScrollPhysics extends ScrollPhysics {
-  final double factor;
-
-  SlowScrollPhysics({ScrollPhysics? parent, this.factor = 2.0})
-      : assert(factor != null && factor >= 1.0),
-        super(parent: parent);
-
-  @override
-  SlowScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return SlowScrollPhysics(parent: buildParent(ancestor), factor: factor);
-  }
-
-  @override
-  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
-    return super.applyPhysicsToUserOffset(position, offset / factor);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_player/src/pages/example_page.dart';
 import 'package:flutter_video_player/src/widgets/video_list.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,10 +21,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Video Player"),
+        title: ElevatedButton(
+            onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ExamplePage(),
+                  ),
+                ),
+            child: Text('click me')),
       ),
       body: VideoList(),
     );
   }
 }
-// ShareReceiverWidget()
+
+// const Text("Video Player")
