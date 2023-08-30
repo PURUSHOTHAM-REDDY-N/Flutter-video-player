@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_video_player/src/helpers/sql_helper.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'dart:io';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ExamplePage extends StatefulWidget {
   const ExamplePage({super.key});
@@ -40,97 +42,38 @@ class _ExamplePageState extends State<ExamplePage> {
         print(path);
         print(title);
         if (path != null && title != null) {
+          await generateThumbnail('/storage/emulated/0/' + path + title);
           await _addItem(title, path);
         }
       }
       _refreshJournals();
     }
+  }
 
-    setState(() {});
+  Future<File?> generateThumbnail(String videoPath) async {
+    final tempDir = await getExternalStorageDirectory();
+    final thumbnailPath = await VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: tempDir?.path,
+      imageFormat: ImageFormat.JPEG,
+      maxHeight: 30,
+      quality: 20,
+    );
+    print(thumbnailPath);
+    return thumbnailPath != null ? File(thumbnailPath) : null;
   }
 
   @override
   void initState() {
     super.initState();
-    // _fetchVideos();
-    _refreshJournals(); // Loading the diary when the app starts
+    _fetchVideos();
+    // _refreshJournals(); // Loading the diary when the app starts
   }
-
-  // final TextEditingController _titleController = TextEditingController();
-  // final TextEditingController _descriptionController = TextEditingController();
-
-  // // This function will be triggered when the floating button is pressed
-  // // It will also be triggered when you want to update an item
-  // void _showForm(int? id) async {
-  //   if (id != null) {
-  //     // id == null -> create new item
-  //     // id != null -> update an existing item
-  //     final existingJournal =
-  //         _journals.firstWhere((element) => element['id'] == id);
-  //     _titleController.text = existingJournal['title'];
-  //     _descriptionController.text = existingJournal['description'];
-  //   }
-
-  //   showModalBottomSheet(
-  //       context: context,
-  //       elevation: 5,
-  //       isScrollControlled: true,
-  //       builder: (_) => Container(
-  //             padding: EdgeInsets.only(
-  //               top: 15,
-  //               left: 15,
-  //               right: 15,
-  //               // this will prevent the soft keyboard from covering the text fields
-  //               bottom: MediaQuery.of(context).viewInsets.bottom,
-  //             ),
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               crossAxisAlignment: CrossAxisAlignment.end,
-  //               children: [
-  //                 TextField(
-  //                   controller: _titleController,
-  //                   decoration: const InputDecoration(hintText: 'Title'),
-  //                 ),
-  //                 const SizedBox(
-  //                   height: 10,
-  //                 ),
-  //                 TextField(
-  //                   controller: _descriptionController,
-  //                   decoration: const InputDecoration(hintText: 'Description'),
-  //                 ),
-  //                 const SizedBox(
-  //                   height: 20,
-  //                 ),
-  //                 ElevatedButton(
-  //                   onPressed: () async {
-  //                     // Save new journal
-  //                     if (id == null) {
-  //                       // await _addItem();
-  //                     }
-
-  //                     if (id != null) {
-  //                       await _updateItem(id);
-  //                     }
-
-  //                     // Clear the text fields
-  //                     _titleController.text = '';
-  //                     _descriptionController.text = '';
-
-  //                     // Close the bottom sheet
-  //                     if (!mounted) return;
-  //                     Navigator.of(context).pop();
-  //                   },
-  //                   child: Text(id == null ? 'Create New' : 'Update'),
-  //                 )
-  //               ],
-  //             ),
-  //           ));
-  // }
 
 // Insert a new journal to the database
   Future<void> _addItem(String title, String path) async {
     await SQLHelper.createItem(title, path);
-    _refreshJournals();
+    // _refreshJournals();
   }
 
   // Update an existing journal
