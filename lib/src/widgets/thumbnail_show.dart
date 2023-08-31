@@ -27,8 +27,8 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
       video: videoPath,
       thumbnailPath: tempDir.path,
       imageFormat: ImageFormat.JPEG,
-      maxHeight: 350,
-      maxWidth: 350,
+      // maxHeight: 350,
+      // maxWidth: 350,
       quality: 100,
     );
     return thumbnailPath != null ? File(thumbnailPath) : null;

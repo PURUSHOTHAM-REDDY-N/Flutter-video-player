@@ -6,22 +6,29 @@ import 'package:flutter_video_player/src/widgets/show_video_files.dart';
 import 'package:flutter_video_player/src/widgets/thumbnail_show.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
-class VideoList extends StatefulWidget {
+class VideosPage extends StatefulWidget {
+  final List<String> videoPath;
+  final List<String> videoTitles;
+
+  VideosPage({required this.videoPath, required this.videoTitles});
   @override
-  _VideoListState createState() => _VideoListState();
+  _VideosPageState createState() => _VideosPageState();
 }
 
-class _VideoListState extends State<VideoList> {
-  List<String> videos = [];
-  List<String> videosTitle = [];
+class _VideosPageState extends State<VideosPage> {
+  late List<String> videos;
+  late List<String> videosTitle;
 
   @override
   void initState() {
     super.initState();
+    videos = widget.videoPath;
+    videosTitle = widget.videoTitles;
     // askPermission();
     // _fetchVideos();
     // _getStoragePermission();
-    _fetchVideos();
+    // _fetchVideos();
+    print(videos);
   }
 
   askPermission() async {
@@ -56,8 +63,6 @@ class _VideoListState extends State<VideoList> {
         }
       }
     }
-
-    setState(() {});
   }
 
   Future<void> _getStoragePermission() async {
@@ -104,13 +109,13 @@ class _VideoListState extends State<VideoList> {
                         MaterialPageRoute(
                           builder: (context) => VideoPlayerScreen(
                               path:
-                                  '/storage/emulated/0/${videos[index]}/${videosTitle[index]}'),
+                                  '/storage/emulated/0/${widget.videoPath[index]}/${widget.videoTitles[index]}'),
                         ),
                       );
                     },
                     child: VideoThumbnailWidget(
                         videoPath:
-                            '/storage/emulated/0/${videos[index]}/${videosTitle[index]}'),
+                            '/storage/emulated/0/${widget.videoPath[index]}/${widget.videoTitles[index]}'),
                   ),
                 ),
                 SizedBox(
@@ -125,7 +130,7 @@ class _VideoListState extends State<VideoList> {
                         MaterialPageRoute(
                           builder: (context) => VideoPlayerScreen(
                               path:
-                                  '/storage/emulated/0/${videos[index]}/${videosTitle[index]}'),
+                                  '/storage/emulated/0/${widget.videoPath[index]}/${widget.videoTitles[index]}'),
                         ),
                       );
                     },

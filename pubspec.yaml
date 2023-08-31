@@ -42,6 +42,7 @@ dependencies:
   device_info_plus: ^8.2.2
   bccm_player: ^1.1.1
   sqflite: ^2.3.0
+  google_nav_bar: ^5.0.6
 dev_dependencies:
   flutter_test:
     sdk: flutter
