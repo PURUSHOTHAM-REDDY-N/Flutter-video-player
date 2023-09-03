@@ -35,7 +35,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("new")),
       backgroundColor: Colors.black,
       body: ListView(
         children: [
