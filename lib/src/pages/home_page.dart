@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_player/src/pages/videos_page.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:flutter_video_player/src/pages/folders_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.title}) : super(key: key);
@@ -25,9 +26,13 @@ class _HomePageState extends State<HomePage> {
         videoPath: videos,
         videoTitles: videosTitle,
       ),
-      Text("data"),
+      FoldersPage(
+        videoPath: videos,
+        videoTitles: videosTitle,
+      ),
       Text("hello"),
     ];
+    print(videos);
     Future.microtask(() async {
       // Your asynchronous code here
       await _fetchVideos();
@@ -40,7 +45,10 @@ class _HomePageState extends State<HomePage> {
               videoPath: videos,
               videoTitles: videosTitle,
             ),
-            Text("data"),
+            FoldersPage(
+              videoPath: videos,
+              videoTitles: videosTitle,
+            ),
             Text("hello"),
           ];
         });
