@@ -83,10 +83,6 @@ class _VideosPageState extends State<VideosPage> {
     }
   }
 
-  showVideo() {
-    print(videos);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

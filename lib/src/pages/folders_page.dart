@@ -1,51 +1,71 @@
 import 'package:flutter/material.dart';
 import 'dart:core';
+import 'package:flutter_video_player/src/widgets/videos_in_folder.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class FoldersPage extends StatefulWidget {
-  final List<String> videoPath;
-  final List<String> videoTitles;
-
-  FoldersPage({required this.videoPath, required this.videoTitles});
+  const FoldersPage({
+    super.key,
+  });
 
   @override
   State<FoldersPage> createState() => _FoldersPageState();
 }
 
 class _FoldersPageState extends State<FoldersPage> {
+  late List<String> albumName = [];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    lastWord();
+    getAlbumNames();
   }
 
-  lastWord() {
-    String input = "WhatsApp/Media/Whats AppVideo/VID20220522181912.mp4";
-    RegExp regex = RegExp(r'[^/]+');
-    RegExpMatch? match = regex.firstMatch(input);
+  Future<void> getAlbumNames() async {
+    // Replace 'your_folder_path' with the actual folder path
+    final List<AssetPathEntity> albums =
+        await PhotoManager.getAssetPathList(type: RequestType.video);
 
-    if (match != null) {
-      String? lastWord = match.group(0);
-      print(lastWord);
-    } else {
-      print("No match found");
+    for (final album in albums) {
+      if (album.name == " ") {
+        albumName.add("others");
+      } else {
+        albumName.add(album.name);
+      }
     }
-  }
-
-  unique() {
-    Set<String> uniqueSet = Set<String>.from(widget.videoPath);
-    List<String> uniqueList = uniqueSet.toList();
-    print(uniqueList);
+    print(albumName);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-          child: FloatingActionButton(
-        onPressed: () => unique(),
-        child: Text("click mme "),
-      )),
+    return Scaffold(
+      body: ListView.builder(
+        itemCount: albumName.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                OutlinedButton(
+                    onPressed: () => {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  VideosInFolder(albumname: albumName[index]),
+                            ),
+                          )
+                        },
+                    child: Text(albumName[index]))
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -26,10 +26,7 @@ class _HomePageState extends State<HomePage> {
         videoPath: videos,
         videoTitles: videosTitle,
       ),
-      FoldersPage(
-        videoPath: videos,
-        videoTitles: videosTitle,
-      ),
+      FoldersPage(),
       Text("hello"),
     ];
     print(videos);
@@ -45,10 +42,7 @@ class _HomePageState extends State<HomePage> {
               videoPath: videos,
               videoTitles: videosTitle,
             ),
-            FoldersPage(
-              videoPath: videos,
-              videoTitles: videosTitle,
-            ),
+            FoldersPage(),
             Text("hello"),
           ];
         });
