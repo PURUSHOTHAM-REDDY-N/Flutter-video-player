@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_player/src/widgets/show_video_files.dart';
-import 'package:flutter_video_player/src/widgets/thumbnail_show.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import '../pages/videos_page.dart';
@@ -25,7 +23,6 @@ class _VideosInFolderState extends State<VideosInFolder> {
   }
 
   Future<void> getVideosInFolder() async {
-    // Replace 'your_folder_path' with the actual folder path
     final List<AssetPathEntity> albums =
         await PhotoManager.getAssetPathList(type: RequestType.video);
 
@@ -53,58 +50,6 @@ class _VideosInFolderState extends State<VideosInFolder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: videos.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 100,
-                  width: 150,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => VideoPlayerScreen(
-                              path:
-                                  '/storage/emulated/0/${videos[index]}/${videosTitle[index]}'),
-                        ),
-                      );
-                    },
-                    child: VideoThumbnailWidget(
-                        videoPath:
-                            '/storage/emulated/0/${videos[index]}/${videosTitle[index]}'),
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Flexible(
-                  flex: 1,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => VideoPlayerScreen(
-                              path:
-                                  '/storage/emulated/0/${videos[index]}/${videosTitle[index]}'),
-                        ),
-                      );
-                    },
-                    child: Text(videosTitle[index]),
-                  ),
-                )
-              ],
-            ),
-          );
-        },
-      ),
-    );
+        body: VideosPage(videoPath: videos, videoTitles: videosTitle));
   }
 }

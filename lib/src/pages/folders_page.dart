@@ -23,13 +23,12 @@ class _FoldersPageState extends State<FoldersPage> {
   }
 
   Future<void> getAlbumNames() async {
-    // Replace 'your_folder_path' with the actual folder path
     final List<AssetPathEntity> albums =
         await PhotoManager.getAssetPathList(type: RequestType.video);
 
     for (final album in albums) {
-      if (album.name == " ") {
-        albumName.add("others");
+      if (album.name == "") {
+        albumName.add("Others");
       } else {
         albumName.add(album.name);
       }
