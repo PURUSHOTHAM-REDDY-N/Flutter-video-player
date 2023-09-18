@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_player/src/widgets/show_video_files.dart';
 import 'package:flutter_video_player/src/widgets/thumbnail_show.dart';

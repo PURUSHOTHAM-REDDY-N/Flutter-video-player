@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_player/src/pages/downloads_page.dart';
 import 'package:flutter_video_player/src/pages/videos_page.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage> {
         videoTitles: videosTitle,
       ),
       FoldersPage(),
-      Text("hello"),
+      DownloadsPage()
     ];
     print(videos);
     Future.microtask(() async {
@@ -43,7 +44,7 @@ class _HomePageState extends State<HomePage> {
               videoTitles: videosTitle,
             ),
             FoldersPage(),
-            Text("hello"),
+            DownloadsPage()
           ];
         });
       }

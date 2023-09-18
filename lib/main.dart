@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_video_player/src/pages/home_page.dart';
 import 'package:bccm_player/bccm_player.dart';
 import 'package:flutter_video_player/src/widgets/show_video_files.dart';
-import 'package:flutter_video_player/src/widgets/thumbnail_show.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uni_links/uni_links.dart';
 
 bool _initialURILinkHandled = false;
