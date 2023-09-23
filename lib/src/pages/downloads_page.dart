@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dartorrent_common/dartorrent_common.dart';
 import 'package:torrent_model/torrent_model.dart';
@@ -32,28 +33,30 @@ class _DownloadsPageState extends State<DownloadsPage> {
     // TODO: implement initState
     super.initState();
     TorrentLoader();
+    // gettingInfoHashBuffer();
   }
 
-  @override
-  void dispose() {
-    _progressStreamController.close();
-    super.dispose();
-  }
+  gettingInfoHashBuffer() {
+    // Replace this magnet link with the one you want to extract the info hash from
+    final magnetLink =
+        "magnet:?xt=urn:btih:6ba8f5f41b7fa22653e2f788be33b3985869b90f&dn=www.5MovieRulz.mov%20-%20Changure%20Bangaru%20Raja%20(2023)%201080p%20Telugu%20DVDScr%20x264%20AAC%202.5GB.mkv&tr=udp%3a%2f%2ftracker.openbittorrent.com%3a80%2fannounce&tr=udp%3a%2f%2ftracker.opentrackr.org%3a1337%2fannounce&tr=udp%3a%2f%2ftracker.tiny-vps.com%3a6969%2fannounce&tr=udp%3a%2f%2fopen.stealth.si%3a80%2fannounce&tr=udp%3a%2f%2fmovies.zsw.ca%3a6969%2fannounce&tr=udp%3a%2f%2fexplodie.org%3a6969%2fannounce&tr=udp%3a%2f%2fbt2.archive.org%3a6969%2fannounce&tr=udp%3a%2f%2fbt1.archive.org%3a6969%2fannounce&tr=udp%3a%2f%2ftracker2.dler.org%3a80%2fannounce&tr=udp%3a%2f%2ftracker1.bt.moack.co.kr%3a80%2fannounce&tr=http%3a%2f%2ftracker.renfei.net%3a8080%2fannounce&tr=http%3a%2f%2ftracker.gbitt.info%3a80%2fannounce&tr=udp%3a%2f%2fnew-line.net%3a6969%2fannounce&tr=udp%3a%2f%2faarsen.me%3a6969%2fannounce&tr=udp%3a%2f%2ftracker.qu.ax%3a6969%2fannounce";
 
-  void resumeTask() {
-    if (task != null) {
-      task!.resume();
-    }
-  }
+    // Extract the info hash from the magnet link
+    final infoHashHex = magnetLink.split(':').last.split('&').first;
 
-  void pauseTask() {
-    if (task != null) {
-      task!.pause();
-    }
+    // Convert the info hash from hexadecimal to a byte buffer
+    final infoHashBuffer = Uint8List.fromList(List.generate(
+        infoHashHex.length ~/ 2,
+        (i) =>
+            int.parse(infoHashHex.substring(i * 2, (i + 1) * 2), radix: 16)));
+
+    // Print the info hash buffer
+    return infoHashBuffer;
+    // print('Info Hash Buffer: $infoHashBuffer');
   }
 
   TorrentLoader() async {
-    var torrentFile = '/storage/emulated/0/Download/test.torrent';
+    var torrentFile = '/storage/emulated/0/Download/movie.mkv.torrent';
 
     // Specify the custom folder path
     final customFolderPath = '/storage/emulated/0/flutter video/';
@@ -74,15 +77,28 @@ class _DownloadsPageState extends State<DownloadsPage> {
     if (!savePath.existsSync()) {
       savePath.createSync(recursive: true);
     }
-
+    print("this is torrent file");
+    print(torrentFile);
     var model = await Torrent.parse(torrentFile);
-    this.model = model;
+    setState(() {
+      this.model = model;
+    });
+    print("this is model");
     print(model.name);
-    var task = TorrentTask.newTask(model, savePath.path);
+    print(model.info);
+    Torrent newModal = Torrent(
+        null,
+        "www.5MovieRulz.mov - Changure Bangaru Raja (2023) 1080p Telugu DVDScr x264 AAC 2.5GB.mkv",
+        "6ba8f5f41b7fa22653e2f788be33b3985869b90f",
+        gettingInfoHashBuffer());
+    print("this is new model");
+    print(newModal.infoHashBuffer);
+    var task = TorrentTask.newTask(newModal, savePath.path);
+    print("this is task");
+    print(task);
     this.task = task; // Assign the task to the class-level variable
 
     Timer? timer;
-    Timer? timer1;
     var startTime = DateTime.now().millisecondsSinceEpoch;
     task.onTaskComplete(() {
       print(
