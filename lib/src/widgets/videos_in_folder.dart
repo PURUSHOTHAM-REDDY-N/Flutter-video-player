@@ -29,7 +29,7 @@ class _VideosInFolderState extends State<VideosInFolder> {
     for (final album in albums) {
       if (album.name == widget.albumname) {
         final assets =
-            await album.getAssetListRange(start: 0, end: album.assetCount);
+            await album.getAssetListRange(start: 0, end: await album.assetCountAsync);
         for (var asset in assets) {
           String? path = asset.relativePath;
           String? title = asset.title;

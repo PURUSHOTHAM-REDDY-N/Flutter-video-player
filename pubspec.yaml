@@ -37,10 +37,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   permission_handler: ^10.4.3
   path_provider: ^2.1.0
-  photo_manager: ^2.7.1
+  photo_manager: ^3.1.1
   video_thumbnail: ^0.5.3
   device_info_plus: ^8.2.2
-  bccm_player: ^1.1.1
+  bccm_player: ^1.1.2
   sqflite: ^2.3.0
   google_nav_bar: ^5.0.6
   fc_native_video_thumbnail: ^0.5.2
