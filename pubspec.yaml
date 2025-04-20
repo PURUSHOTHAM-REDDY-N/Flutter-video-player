@@ -35,16 +35,19 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  permission_handler: ^10.4.3
+  permission_handler: ^12.0.0+1
   path_provider: ^2.1.0
   photo_manager: ^3.1.1
   video_thumbnail: ^0.5.3
-  device_info_plus: ^8.2.2
-  bccm_player: ^1.1.2
+  device_info_plus: ^11.3.3
+  bccm_player:
+    git:
+      url: https://github.com/PURUSHOTHAM-REDDY-N/bccm-player.git
+      ref: 1fe6684
   sqflite: ^2.3.0
   google_nav_bar: ^5.0.6
-  fc_native_video_thumbnail: ^0.5.2
-  uni_links: ^0.5.1
+  fc_native_video_thumbnail: ^0.17.2
+  app_links: ^6.4.0
   fluttertoast: ^8.2.2
   torrent_streamer: ^0.0.2
   torrent_task:

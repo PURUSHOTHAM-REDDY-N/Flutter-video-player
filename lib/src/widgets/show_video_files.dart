@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:bccm_player/bccm_player.dart';
 
@@ -13,15 +15,15 @@ class VideoPlayerScreen extends StatefulWidget {
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   void initState() {
-    BccmPlayerController.primary.initialize();
+    final file = File(widget.path);
     BccmPlayerController.primary.replaceCurrentMediaItem(
-        MediaItem(
-          url: widget.path,
-          mimeType: 'video/*',
-          metadata: MediaMetadata(title: 'TEST'),
-        ),
-        autoplay: true);
-
+      MediaItem(
+        url: file.path, // Use this instead of url
+        mimeType: 'video/*',
+        metadata: MediaMetadata(title: 'TEST'),
+      ),
+      autoplay: true,
+    );
     super.initState();
   }
 

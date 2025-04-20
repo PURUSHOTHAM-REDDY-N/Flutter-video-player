@@ -5,9 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_video_player/src/pages/home_page.dart';
 import 'package:bccm_player/bccm_player.dart';
 import 'package:flutter_video_player/src/widgets/show_video_files.dart';
-import 'package:uni_links/uni_links.dart';
-
-bool _initialURILinkHandled = false;
+import 'package:app_links/app_links.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   startPlayer();
@@ -17,32 +16,30 @@ void main() {
 startPlayer() async {
   WidgetsFlutterBinding.ensureInitialized();
   await BccmPlayerInterface.instance.setup();
+  BccmPlayerController.primary.initialize();
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: IntentWidget(title: "hello"));
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const IntentWidget(title: "hello"),
+    );
   }
 }
 
-// const HomePage(
-//         title: "video player",
-//       ),
-
 class IntentWidget extends StatefulWidget {
-  const IntentWidget({Key? key, required this.title});
+  const IntentWidget({Key? key, required this.title}) : super(key: key);
 
   final String title;
+
   @override
   State<IntentWidget> createState() => _IntentWidgetState();
 }
@@ -52,73 +49,65 @@ class _IntentWidgetState extends State<IntentWidget> {
   Uri? _currentURI;
   Object? _err;
 
-  StreamSubscription? _streamSubscription;
+  final AppLinks _appLinks = AppLinks();
+  StreamSubscription<Uri>? _streamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _initURIHandler();
-    _incomingLinkHandler();
+    requestPermissions();
+    _handleInitialUri();
+    _handleIncomingLinks();
   }
 
-  Future<void> _initURIHandler() async {
-    if (!_initialURILinkHandled) {
-      _initialURILinkHandled = true;
-      // Fluttertoast.showToast(
-      //     msg: "Invoked _initURIHandler",
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.BOTTOM,
-      //     timeInSecForIosWeb: 1,
-      //     backgroundColor: Colors.green,
-      //     textColor: Colors.white);
-      try {
-        final initialURI = await getInitialUri();
-        // Use the initialURI and warn the user if it is not correct,
-        // but keep in mind it could be `null`.
-        if (initialURI != null) {
-          debugPrint("Initial URI received $initialURI");
-          if (!mounted) {
-            return;
-          }
-          setState(() {
-            _initialURI = initialURI;
-          });
-        } else {
-          debugPrint("Null Initial URI received");
-        }
-      } on PlatformException {
-        // Platform messages may fail, so we use a try/catch PlatformException.
-        // Handle exception by warning the user their action did not succeed
-        debugPrint("Failed to receive initial uri");
-      } on FormatException catch (err) {
-        if (!mounted) {
-          return;
-        }
-        debugPrint('Malformed Initial URI received');
-        setState(() => _err = err);
-      }
+  Future<void> requestPermissions() async {
+    // Ask for storage permission (for Android < 11)
+    var storageStatus = await Permission.storage.request();
+
+    // Ask for manage external storage (for Android 11+)
+    var manageStorageStatus = await Permission.manageExternalStorage.request();
+
+    if (storageStatus.isGranted || manageStorageStatus.isGranted) {
+      print("✅ Permissions granted");
+    } else {
+      print("❌ Permissions denied");
+      // You can show a dialog or navigate to app settings
+      openAppSettings();
     }
   }
 
-  /// Handle incoming links - the ones that the app will receive from the OS
-  /// while already started.
-  void _incomingLinkHandler() {
+  Future<void> _handleInitialUri() async {
+    try {
+      final uri = await _appLinks.getInitialLink();
+      if (uri != null) {
+        debugPrint("Initial URI received: $uri");
+        if (!mounted) return;
+        setState(() {
+          _initialURI = uri;
+        });
+      } else {
+        debugPrint("No initial URI received");
+      }
+    } on PlatformException {
+      debugPrint("Failed to receive initial URI");
+    } on FormatException catch (err) {
+      if (!mounted) return;
+      debugPrint('Malformed initial URI received');
+      setState(() => _err = err);
+    }
+  }
+
+  void _handleIncomingLinks() {
     if (!kIsWeb) {
-      // It will handle app links while the app is already started - be it in
-      // the foreground or in the background.
-      _streamSubscription = uriLinkStream.listen((Uri? uri) {
-        if (!mounted) {
-          return;
-        }
+      _streamSubscription = _appLinks.uriLinkStream.listen((Uri? uri) {
+        if (!mounted) return;
         debugPrint('Received URI: $uri');
         setState(() {
           _currentURI = uri;
           _err = null;
         });
       }, onError: (Object err) {
-        if (!mounted) {
-          return;
-        }
+        if (!mounted) return;
         debugPrint('Error occurred: $err');
         setState(() {
           _currentURI = null;
@@ -141,8 +130,8 @@ class _IntentWidgetState extends State<IntentWidget> {
   @override
   Widget build(BuildContext context) {
     if (_initialURI == null) {
-      return Scaffold(
-        body: const HomePage(
+      return const Scaffold(
+        body: HomePage(
           title: "video player",
         ),
       );
@@ -151,5 +140,3 @@ class _IntentWidgetState extends State<IntentWidget> {
     }
   }
 }
-
-// '/storage/emulated/0/${widget.videoPath[index]}/${widget.videoTitles[index]}'

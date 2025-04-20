@@ -70,7 +70,8 @@ class _VideosPageState extends State<VideosPage> {
                         ),
                       );
                     },
-                    child: Text(videosTitle[index]),
+                    child: Text(
+                        '${widget.videoPath[index]}/${widget.videoTitles[index]}'),
                   ),
                 )
               ],
