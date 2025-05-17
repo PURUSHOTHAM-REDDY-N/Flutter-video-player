@@ -15,6 +15,7 @@ class VideoPlayerScreen extends StatefulWidget {
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   void initState() {
+    print('\x1B[34m  \x1B[0m');
     final file = File(widget.path);
     BccmPlayerController.primary.replaceCurrentMediaItem(
       MediaItem(
@@ -29,9 +30,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   @override
   void dispose() {
-    BccmPlayerController.primary.pause();
+    BccmPlayerController.primary.dispose();
     super.dispose();
   }
+
+  // @override
+  // void deactivate() {
+  //   BccmPlayerController.primary.pause();
+  //   super.deactivate();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +54,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   showControls: true,
                   useSurfaceView: true,
                 ),
-                // ElevatedButton(
-                //     onPressed: () =>
-                //         BccmPlayerController.primary.enterNativeFullscreen(),
-                //     child: Text("enter"))
+                ElevatedButton(
+                    onPressed: () => BccmPlayerController.primary.pause(),
+                    child: Text("pause"))
               ],
             ),
           ),

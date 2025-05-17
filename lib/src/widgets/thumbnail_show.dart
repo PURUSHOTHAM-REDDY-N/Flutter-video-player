@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:get_thumbnail_video/index.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:fc_native_video_thumbnail/fc_native_video_thumbnail.dart';
+import 'package:get_thumbnail_video/video_thumbnail.dart';
 
 class VideoThumbnailWidget extends StatefulWidget {
   final String videoPath;
@@ -16,8 +16,6 @@ class VideoThumbnailWidget extends StatefulWidget {
 class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
   Future<File?>? thumbnailFuture;
 
-  final plugin = FcNativeVideoThumbnail();
-
   @override
   void initState() {
     super.initState();
@@ -29,12 +27,12 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
     final thumbnailPath = await VideoThumbnail.thumbnailFile(
       video: videoPath,
       thumbnailPath: tempDir.path,
-      imageFormat: ImageFormat.JPEG,
+      imageFormat: ImageFormat.WEBP,
       // maxHeight: 350,
       // maxWidth: 350,
-      quality: 100,
+      quality: 20,
     );
-    return thumbnailPath != null ? File(thumbnailPath) : null;
+    return thumbnailPath != null ? File(thumbnailPath.path) : null;
     // final thumbnailGenerated = await plugin.getVideoThumbnail(
     //     srcFile: videoPath,
     //     destFile: tempDir.path,

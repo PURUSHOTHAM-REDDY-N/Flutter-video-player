@@ -1,22 +1,42 @@
 import 'dart:async';
+
+import 'package:app_links/app_links.dart';
+import 'package:bccm_player/bccm_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_video_player/src/pages/home_page.dart';
-import 'package:bccm_player/bccm_player.dart';
+import 'package:flutter_video_player/src/widgets/background_detector.dart';
 import 'package:flutter_video_player/src/widgets/show_video_files.dart';
-import 'package:app_links/app_links.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-void main() {
-  startPlayer();
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Must be first
+  await requestPermissions();
+  await startPlayer();
+  runApp(const BackgroundDetector(child: MyApp()));
 }
 
-startPlayer() async {
-  WidgetsFlutterBinding.ensureInitialized();
+Future<void> requestPermissions() async {
+  // Ask for storage permission (for Android < 11)
+  var storageStatus = await Permission.storage.request();
+
+  // Ask for manage external storage (for Android 11+)
+  var manageStorageStatus = await Permission.manageExternalStorage.request();
+
+  if (storageStatus.isGranted || manageStorageStatus.isGranted) {
+    print("✅ Permissions granted");
+  } else {
+    print("❌ Permissions denied");
+    // You can show a dialog or navigate to app settings
+    openAppSettings();
+  }
+}
+
+Future<void> startPlayer() async {
+  var data = await BccmPlayerInterface.instance.getPlayerState();
+  print('\x1B[34m ${data?.playerId} \x1B[0m');
   await BccmPlayerInterface.instance.setup();
-  BccmPlayerController.primary.initialize();
 }
 
 class MyApp extends StatelessWidget {
@@ -48,6 +68,7 @@ class _IntentWidgetState extends State<IntentWidget> {
   Uri? _initialURI;
   Uri? _currentURI;
   Object? _err;
+  String? _lastHandledUri;
 
   final AppLinks _appLinks = AppLinks();
   StreamSubscription<Uri>? _streamSubscription;
@@ -55,25 +76,8 @@ class _IntentWidgetState extends State<IntentWidget> {
   @override
   void initState() {
     super.initState();
-    requestPermissions();
     _handleInitialUri();
     _handleIncomingLinks();
-  }
-
-  Future<void> requestPermissions() async {
-    // Ask for storage permission (for Android < 11)
-    var storageStatus = await Permission.storage.request();
-
-    // Ask for manage external storage (for Android 11+)
-    var manageStorageStatus = await Permission.manageExternalStorage.request();
-
-    if (storageStatus.isGranted || manageStorageStatus.isGranted) {
-      print("✅ Permissions granted");
-    } else {
-      print("❌ Permissions denied");
-      // You can show a dialog or navigate to app settings
-      openAppSettings();
-    }
   }
 
   Future<void> _handleInitialUri() async {
@@ -82,9 +86,18 @@ class _IntentWidgetState extends State<IntentWidget> {
       if (uri != null) {
         debugPrint("Initial URI received: $uri");
         if (!mounted) return;
+
         setState(() {
           _initialURI = uri;
+          _lastHandledUri = uri.toString();
         });
+
+        // 👇 Navigate manually
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => VideoPlayerScreen(path: uri.toString()),
+          ),
+        );
       } else {
         debugPrint("No initial URI received");
       }
@@ -100,8 +113,19 @@ class _IntentWidgetState extends State<IntentWidget> {
   void _handleIncomingLinks() {
     if (!kIsWeb) {
       _streamSubscription = _appLinks.uriLinkStream.listen((Uri? uri) {
-        if (!mounted) return;
+        if (!mounted || uri == null) return;
+
         debugPrint('Received URI: $uri');
+
+        if (uri.toString() != _lastHandledUri) {
+          _lastHandledUri = uri.toString();
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => VideoPlayerScreen(path: uri.toString()),
+            ),
+          );
+        }
+
         setState(() {
           _currentURI = uri;
           _err = null;
@@ -129,14 +153,10 @@ class _IntentWidgetState extends State<IntentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (_initialURI == null) {
-      return const Scaffold(
-        body: HomePage(
-          title: "video player",
-        ),
-      );
-    } else {
-      return VideoPlayerScreen(path: _initialURI.toString());
-    }
+    return const Scaffold(
+      body: HomePage(
+        title: "video player",
+      ),
+    );
   }
 }

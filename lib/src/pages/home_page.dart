@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       FoldersPage(),
       MagnetDownload()
     ];
-    print(videos);
+    // print(videos);
     Future.microtask(() async {
       // Your asynchronous code here
       await _fetchVideos();
@@ -59,19 +59,19 @@ class _HomePageState extends State<HomePage> {
     List<AssetPathEntity> entities = await PhotoManager.getAssetPathList(
       type: RequestType.video,
     );
-    print("these are entities");
-    print(entities);
+    // print("these are entities");
+    // print(entities);
     for (var path in entities) {
       final assets = await path.getAssetListRange(
           start: 0, end: await path.assetCountAsync);
-      print("these are assets");
-      print(assets);
+      // print("these are assets");
+      // print(assets);
       for (var asset in assets) {
-        print(asset.duration);
+        // print(asset.duration);
         String? path = asset.relativePath;
         String? title = asset.title;
-        print(path);
-        print(title);
+        // print(path);
+        // print(title);
         if (path != null) {
           videos.add(path);
         }
